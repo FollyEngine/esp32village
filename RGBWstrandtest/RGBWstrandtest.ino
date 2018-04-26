@@ -49,21 +49,19 @@ void loop() {
   Serial.printf("loop\n");
 
   // Some example procedures showing how to display to the pixels:
-  colorWipe(strip.Color(255, 0, 0), 50); // Red
-  colorWipe(strip.Color(0, 255, 0), 50); // Green
-  colorWipe(strip.Color(0, 0, 255), 50); // Blue
-  colorWipe(strip.Color(0, 0, 0, 255), 50); // White
+  //colorWipe(strip.Color(255, 0, 0), 50); // Red
+  //colorWipe(strip.Color(0, 255, 0), 50); // Green
+  //colorWipe(strip.Color(0, 0, 255), 50); // Blue
+  //colorWipe(strip.Color(0, 0, 0, 255), 50); // White
 
   Serial.printf("mid\n");
 
   whiteOverRainbow(20,75,5);  
 
-  pulseWhite(5); 
-
-   fullWhite();
-   delay(2000);
-
-  rainbowFade2White(3,3,1);
+  //pulseWhite(5);
+  //fullWhite();
+  //delay(2000);
+  //rainbowFade2White(3,3,1);
 
   Serial.printf("faded\n");
 }
