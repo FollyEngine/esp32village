@@ -27,7 +27,7 @@
 
 const char* SSID="ASUS";
 const char* PASS="MEGA SHED";
-const char* MQTT="10.10.11.3";
+const char* MQTT="10.10.11.2";
 const char* TOPIC="status/touch/";
 WiFiClient espWifi;
 PubSubClient client(espWifi);
@@ -74,8 +74,11 @@ void loop() {
 
 void mqtt() {
   while (!client.connected()) {
-    client.connect("testesp32");
-    Serial.println("+");
+    while (!client.connected()) {
+      client.connect("testesp32");
+      Serial.println("+");
+    }
+    client.publish("status/esp32/mqtt", "connected");
   }
   client.loop();
 }
@@ -90,3 +93,4 @@ void setup_wifi() {
   Serial.println("Connected:");
   Serial.println( WiFi.localIP());
 }
+
