@@ -42,6 +42,7 @@ fi
 
 # install the MQTT lib
 arduino --install-library PubSubClient
+arduino --install-library 'Adafruit NeoPixel'
 
 sudo adduser $USER sudo
 sudo adduser $USER dialout
