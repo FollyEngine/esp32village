@@ -1,3 +1,7 @@
+
+#include "mqtt.h"
+Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "10.10.11.2", 1883);
+
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
   #include <avr/power.h>
@@ -29,8 +33,22 @@ byte neopix_gamma[] = {
   177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
   215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
 
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i=0;i<length;i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+  neopixel();
+  fullOff();
+}
+
 
 void setup() {
+  mqtt.setCallback(callback);
+  mqtt.setup();
   // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
   #if defined (__AVR_ATtiny85__)
     if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
@@ -43,11 +61,18 @@ void setup() {
   while (!Serial);
   Serial.begin(115200);
   Serial.printf("Started\n");
+  fullOff();
 }
 
 void loop() {
-  Serial.printf("loop\n");
+  mqtt.subscribe("status/test/hello");
+  mqtt.subscribe("status/esp32/button");
 
+  //Serial.printf("loop\n");
+  mqtt.loop();
+}
+
+void neopixel() {
   // Some example procedures showing how to display to the pixels:
   //colorWipe(strip.Color(255, 0, 0), 50); // Red
   //colorWipe(strip.Color(0, 255, 0), 50); // Green
@@ -213,7 +238,13 @@ void fullWhite() {
     }
       strip.show();
 }
-
+void fullOff() {
+  
+    for(uint16_t i=0; i<strip.numPixels(); i++) {
+        strip.setPixelColor(i, strip.Color(0,0,0, 0 ) );
+    }
+      strip.show();
+}
 
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle(uint8_t wait) {
