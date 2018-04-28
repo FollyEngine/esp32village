@@ -7,7 +7,7 @@ fi
 
 sudo sed 's/main$/main contrib non-free/g' /etc/apt/sources.list
 sudo apt-get update
-sudo apt-get install -yq sudo flashrom mosquitto mosquitto-clients vim git firmware-linux-free python-serial firmware-iwlwifi
+sudo apt-get install -yq sudo flashrom mosquitto mosquitto-clients vim git firmware-linux-free python-serial firmware-iwlwifi openssh-server
 
 export fromdir=$(pwd)
 export basedir='/usr/local/'
@@ -40,9 +40,18 @@ if [[ ! -d "${arduinodir}/hardware/espressif" ]]; then
 	python get.py
 fi
 
+
+if [[ ! -d "${arduinodir}/examples/planting" ]]; then
+	git clone https://github.com/FollyEngine/esp32village 00.Planting
+	ln -s ${arduinodir}/examples/00.Planting/mqtt ${arduinodir}/libraries/mqtt
+fi
+
 # install the MQTT lib
 arduino --install-library PubSubClient
 arduino --install-library 'Adafruit NeoPixel'
+mv ~/Arduino/libraries/* ${arduinodir}/libraries/
 
 sudo adduser $USER sudo
 sudo adduser $USER dialout
+
+sudo adduser --ingroup dialout --disabled-password planting
