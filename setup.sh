@@ -5,7 +5,7 @@ if ! which sudo; then
 	exit
 fi
 
-sudo sed 's/main$/main contrib non-free/g' /etc/apt/sources.list
+sudo sed -i~ 's/main$/main contrib non-free/g' /etc/apt/sources.list
 sudo apt-get update
 sudo apt-get install -yq sudo flashrom mosquitto mosquitto-clients vim git firmware-linux-free python-serial firmware-iwlwifi openssh-server
 
@@ -24,7 +24,7 @@ if [[ ! -d "$arduinodir" ]]; then
 	sudo chmod 777 $arduinodir
 	cd $arduinodir
 	./install.sh
-	ln -s /usr/local/arduino-1.8.5/arduino /usr/local/bin/
+	sudo ln -s /usr/local/arduino-1.8.5/arduino /usr/local/bin/
 fi
 
 
@@ -37,11 +37,12 @@ if [[ ! -d "${arduinodir}/hardware/espressif" ]]; then
 		git clone https://github.com/espressif/arduino-esp32.git esp32
 	fi
 	cd esp32/tools/
-	python get.py
+	sudo python get.py
 fi
 
 
-if [[ ! -d "${arduinodir}/examples/planting" ]]; then
+if [[ ! -d "${arduinodir}/examples/00.Planting" ]]; then
+	cd "${arduinodir}/examples/"
 	git clone https://github.com/FollyEngine/esp32village 00.Planting
 	ln -s ${arduinodir}/examples/00.Planting/mqtt ${arduinodir}/libraries/mqtt
 fi
