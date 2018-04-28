@@ -13,14 +13,17 @@ class Mqtt
 {
   public:
     Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport);
+
+    void setHostname(char *name);
     void setCallback(MQTT_CALLBACK_SIGNATURE);
 
     void setup();
-    void loop();
+    bool loop();  // returns false if we had to re-init
 
     void publish(const char *topic, const char *message);
     void subscribe(const char *topic);
   private:
+    char m_Hostname[256];
     char *m_SSID;
     char *m_PASS;
     char *m_MQTTServer;

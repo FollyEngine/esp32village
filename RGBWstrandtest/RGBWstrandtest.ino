@@ -42,34 +42,33 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
   neopixel();
+  //fullWhite();
+  delay(100);
   fullOff();
+  mqtt.publish("status/esp32/received", "message");
 }
 
 
 void setup() {
+  while (!Serial);
+  Serial.begin(115200);
+  Serial.printf("Started\n");
+  
   mqtt.setCallback(callback);
   mqtt.setup();
-  // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
-  #if defined (__AVR_ATtiny85__)
-    if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
-  #endif
-  // End of trinket special code
+
   strip.setBrightness(BRIGHTNESS);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 
-  while (!Serial);
-  Serial.begin(115200);
-  Serial.printf("Started\n");
   fullOff();
 }
 
 void loop() {
-  mqtt.subscribe("status/test/hello");
-  mqtt.subscribe("status/esp32/button");
-
-  //Serial.printf("loop\n");
-  mqtt.loop();
+  if (!mqtt.loop()) {
+    mqtt.subscribe("status/test/hello");
+    mqtt.subscribe("status/esp32/button");
+  }
 }
 
 void neopixel() {
