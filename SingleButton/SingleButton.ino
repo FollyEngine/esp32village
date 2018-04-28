@@ -10,6 +10,11 @@ const int ledPin =  BUILTIN_LED;      // the number of the LED pin
 int buttonState = 0;         // variable for reading the pushbutton status
 
 void setup() {
+
+  while (!Serial);
+  Serial.begin(115200);
+  Serial.printf("Started\n");
+  
   mqtt.setup();
   
   // initialize the LED pin as an output:
