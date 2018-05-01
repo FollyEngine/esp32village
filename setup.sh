@@ -47,6 +47,11 @@ if [[ ! -d "${arduinodir}/examples/00.Planting" ]]; then
 	ln -s ${arduinodir}/examples/00.Planting/mqtt ${arduinodir}/libraries/mqtt
 fi
 
+
+if [[ ! -d "${arduinodir}/examples/planting" ]]; then
+	git clone https://github.com/FollyEngine/esp32village planting
+fi
+
 # install the MQTT lib
 arduino --install-library PubSubClient
 arduino --install-library 'Adafruit NeoPixel'
