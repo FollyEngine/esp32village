@@ -57,7 +57,7 @@ arduino --install-library PubSubClient
 arduino --install-library 'Adafruit NeoPixel'
 cp -r ~/Arduino/libraries/* ${arduinodir}/libraries/
 
-if !getent passwd planting; then
+if ! getent passwd planting; then
 	sudo adduser $USER sudo
 	sudo adduser $USER dialout
 	sudo adduser --ingroup dialout --disabled-password planting
