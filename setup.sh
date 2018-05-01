@@ -62,3 +62,5 @@ if ! getent passwd planting; then
 	sudo adduser $USER dialout
 	sudo adduser --ingroup dialout --disabled-password planting
 fi
+
+cp planting.png /var/lib/AccountsService/icons/planting
