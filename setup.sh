@@ -45,19 +45,20 @@ if [[ ! -d "${arduinodir}/examples/00.Planting" ]]; then
 	cd "${arduinodir}/examples/"
 	git clone https://github.com/FollyEngine/esp32village 00.Planting
 	ln -s ${arduinodir}/examples/00.Planting/mqtt ${arduinodir}/libraries/mqtt
+else
+	cd "${arduinodir}/examples/00.Planting"
+	git fetch --all
+	git pull
 fi
 
-
-if [[ ! -d "${arduinodir}/examples/planting" ]]; then
-	git clone https://github.com/FollyEngine/esp32village planting
-fi
 
 # install the MQTT lib
 arduino --install-library PubSubClient
 arduino --install-library 'Adafruit NeoPixel'
-mv ~/Arduino/libraries/* ${arduinodir}/libraries/
+cp -r ~/Arduino/libraries/* ${arduinodir}/libraries/
 
-sudo adduser $USER sudo
-sudo adduser $USER dialout
-
-sudo adduser --ingroup dialout --disabled-password planting
+if !getent passwd planting; then
+	sudo adduser $USER sudo
+	sudo adduser $USER dialout
+	sudo adduser --ingroup dialout --disabled-password planting
+fi
