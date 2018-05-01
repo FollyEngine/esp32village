@@ -55,7 +55,7 @@ fi
 # install the MQTT lib
 arduino --install-library PubSubClient
 arduino --install-library 'Adafruit NeoPixel'
-cp -r ~/Arduino/libraries/* ${arduinodir}/libraries/
+cp -r ~/Arduino/libraries/* ${arduinodir}/libraries/ || true
 
 if ! getent passwd planting; then
 	sudo adduser $USER sudo
