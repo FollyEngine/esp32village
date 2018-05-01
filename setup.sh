@@ -64,3 +64,6 @@ if ! getent passwd planting; then
 fi
 
 cp planting.png /var/lib/AccountsService/icons/planting
+if ! grep Icon /var/lib/AccountsService/users/planting; then
+	sudo echo "Icon=/var/lib/AccountsService/icons/planting" >> /var/lib/AccountsService/users/planting
+fi
