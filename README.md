@@ -13,3 +13,7 @@ Wemos Lolin 32 - ESP32 chip
  - Capacitive Touch
  - RGB Strand test
  - Single button
+
+## Documentation
+ - http://esp-idf.readthedocs.io/en/latest/index.html
+ - http://esp32village.blogspot.com.au/
