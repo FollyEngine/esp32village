@@ -1,5 +1,8 @@
 # ESP32 Village
 
+http://esp32village.blogspot.com.au/2018/04/esp32village-welcome.html
+
+
 ## Hardware
 
 Wemos Lolin 32 - ESP32 chip
