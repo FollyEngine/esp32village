@@ -61,6 +61,7 @@ fi
 # install the MQTT lib
 arduino --install-library PubSubClient
 arduino --install-library 'Adafruit NeoPixel'
+arduino --install-library ESP32Servo
 cp -r ~/Arduino/libraries/* ${arduinodir}/libraries/ || true
 
 if ! getent passwd planting; then
