@@ -9,6 +9,7 @@ sudo sed -i~ 's/main$/main contrib non-free/g' /etc/apt/sources.list
 sudo apt-get update
 sudo apt-get upgrade -yq
 sudo apt-get install -yq sudo flashrom mosquitto mosquitto-clients \
+	fritzing fritzing-parts \
 	vim git firmware-linux-free python-serial \
 	firmware-iwlwifi openssh-server \
 	avrdude binutils-avr extra-xdg-menus gcc-avr libftdi1 \
