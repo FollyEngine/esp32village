@@ -60,18 +60,25 @@ bool Mqtt::loop() {
         client.connect(m_Hostname);
         Serial.println("+");
       }
-      char topic[81];
-      snprintf(topic, 80, "status/%s/mqtt", m_Hostname);
-      client.publish(topic, "connected");
+      publish("button", "status", "connected");
     }
     client.loop();
     return reInit;
   };
 
-void Mqtt::publish(const char *topic, const char *message) {
+void Mqtt::publish(const char *object, const char *verb, const char *message) {
+    char topic[81];
+    snprintf(topic, 80, "%s/%s/%s", m_Hostname, object, verb);
     client.publish(topic, message);
   };
 
-void Mqtt::subscribe(const char *topic) {
+void Mqtt::status(const char *object, const char *message) {
+    publish(object, "status", message);
+  };
+
+// TODO: need to add a callback...
+void Mqtt::subscribe(const char *host, const char *object, const char *verb) {
+    char topic[81];
+    snprintf(topic, 80, "%s/%s/%s", host, object, verb);
     client.subscribe(topic);
   };

@@ -25,8 +25,9 @@ class Mqtt
     void setup();
     bool loop();  // returns false if we had to re-init
 
-    void publish(const char *topic, const char *message);
-    void subscribe(const char *topic);
+    void publish(const char *object, const char *verb, const char *message);
+    void status(const char *object, const char *message);
+    void subscribe(const char *host, const char *object, const char *verb);
   private:
     char m_Hostname[256];
     char *m_SSID;
