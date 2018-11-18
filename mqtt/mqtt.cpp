@@ -2,7 +2,6 @@
 
 #include "mqtt.h"
 
-
 Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport) {
   m_SSID = (char*) malloc(strlen(SSID) + 1);
   strcpy(m_SSID, SSID);
@@ -60,20 +59,35 @@ bool Mqtt::loop() {
         client.connect(m_Hostname);
         Serial.println("+");
       }
-      publish("button", "status", "connected");
+      //publishString("button", "status", "connected");
+      StaticJsonBuffer<200> jsonBuffer;
+      JsonObject& root = jsonBuffer.createObject();
+      root["status"] = "listening";
+      status("mqtt", root);
     }
     client.loop();
     return reInit;
   };
 
-void Mqtt::publish(const char *object, const char *verb, const char *message) {
+  void Mqtt::publishString(const char *object, const char *verb, const char *message) {
     char topic[81];
     snprintf(topic, 80, "%s/%s/%s", m_Hostname, object, verb);
     client.publish(topic, message);
   };
 
-void Mqtt::status(const char *object, const char *message) {
-    publish(object, "status", message);
+  void Mqtt::publish(const char *object, const char *verb, const JsonObject& root) {
+    char str[201];
+    root.printTo(str, 200);
+    publishString(object, verb, str);
+  };
+
+  void Mqtt::status(const char *object, const JsonObject& root) {
+    publish(object, "status", root);
+  };
+
+
+  void Mqtt::statusString(const char *object, const char *message) {
+      publishString(object, "status", message);
   };
 
 // TODO: need to add a callback...
