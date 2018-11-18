@@ -32,7 +32,10 @@ void Mqtt::setup() {
     WiFi.macAddress(mac);
     snprintf(m_Hostname, 255, "esp32-%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
+#ifndef ESP8266
+    // TODO: does this exist in some other way?
     WiFi.setHostname(m_Hostname);
+#endif
     while (WiFi.status() != WL_CONNECTED) {
       Serial.println(".");
       delay(500);
@@ -52,13 +55,13 @@ bool Mqtt::loop() {
       while (!client.connected()) {
         Serial.println("Connected:");
         Serial.println( WiFi.localIP());
-        Serial.println( WiFi.getHostname());
+        Serial.println( m_Hostname);
 
-        client.connect(WiFi.getHostname());
+        client.connect(m_Hostname);
         Serial.println("+");
       }
       char topic[81];
-      snprintf(topic, 80, "status/%s/mqtt", WiFi.getHostname());
+      snprintf(topic, 80, "status/%s/mqtt", m_Hostname);
       client.publish(topic, "connected");
     }
     client.loop();
