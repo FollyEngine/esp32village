@@ -14,6 +14,9 @@ Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttp
 
 void Mqtt::setCallback(MQTT_CALLBACK_SIGNATURE) {
   this->callback = callback;
+  if (client.connected()) {
+    client.setCallback(this->callback);
+  }
 }
 
 void Mqtt::setHostname(char *name) {
@@ -47,9 +50,7 @@ void Mqtt::setup() {
     Serial.println("Connected:");
     Serial.println( WiFi.localIP());
     client.setServer(m_MQTTServer, m_MQTTPort);
-    if (callback != NULL) {
-      client.setCallback(callback);
-    }
+    client.setCallback(callback);
   };
 
 bool Mqtt::loop() {
@@ -64,6 +65,8 @@ bool Mqtt::loop() {
         client.connect(m_Hostname);
         Serial.println("+");
       }
+      client.setCallback(callback);
+
       //publishString("button", "status", "connected");
       StaticJsonBuffer<200> jsonBuffer;
       JsonObject& root = jsonBuffer.createObject();
@@ -96,8 +99,8 @@ bool Mqtt::loop() {
   };
 
 // TODO: need to add a callback...
-void Mqtt::subscribe(const char *host, const char *object, const char *verb) {
+boolean Mqtt::subscribe(const char *host, const char *object, const char *verb) {
     char topic[81];
     snprintf(topic, 80, "%s/%s/%s", host, object, verb);
-    client.subscribe(topic);
+    return client.subscribe(topic);
   };
