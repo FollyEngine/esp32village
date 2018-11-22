@@ -18,7 +18,7 @@ sudo apt-get install -yq sudo flashrom mosquitto mosquitto-clients \
 
 export fromdir=$(pwd)
 export basedir='/usr/local/'
-export ver='arduino-1.8.5'
+export ver='arduino-1.8.7'
 export arduinodir="${basedir}${ver}"
 
 if [[ ! -d "$arduinodir" ]]; then
