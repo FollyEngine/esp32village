@@ -32,7 +32,7 @@ class Mqtt
     void publishString(const char *object, const char *verb, const char *message);
     void statusString(const char *object, const char *message);
     
-    void subscribe(const char *host, const char *object, const char *verb);
+    boolean subscribe(const char *host, const char *object, const char *verb);
   private:
     char m_Hostname[256];
     char *m_SSID;

@@ -14,6 +14,9 @@ Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttp
 
 void Mqtt::setCallback(MQTT_CALLBACK_SIGNATURE) {
   this->callback = callback;
+  if (client.connected()) {
+    client.setCallback(this->callback);
+  }
 }
 
 void Mqtt::setHostname(char *name) {
@@ -29,7 +32,12 @@ void Mqtt::setup() {
 
     uint8_t mac[6];
     WiFi.macAddress(mac);
-    snprintf(m_Hostname, 255, "esp32-%x%x%x%x%x%x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+#ifdef ESP8266
+    char *hostPrefix = "esp8266";
+#else
+    char *hostPrefix = "esp32";
+#endif
+    snprintf(m_Hostname, 255, "%s-%x%x%x%x%x%x", hostPrefix, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
 #ifndef ESP8266
     // TODO: does this exist in some other way?
@@ -42,9 +50,7 @@ void Mqtt::setup() {
     Serial.println("Connected:");
     Serial.println( WiFi.localIP());
     client.setServer(m_MQTTServer, m_MQTTPort);
-    if (callback != NULL) {
-      client.setCallback(callback);
-    }
+    client.setCallback(callback);
   };
 
 bool Mqtt::loop() {
@@ -59,6 +65,8 @@ bool Mqtt::loop() {
         client.connect(m_Hostname);
         Serial.println("+");
       }
+      client.setCallback(callback);
+
       //publishString("button", "status", "connected");
       StaticJsonBuffer<200> jsonBuffer;
       JsonObject& root = jsonBuffer.createObject();
@@ -91,8 +99,8 @@ bool Mqtt::loop() {
   };
 
 // TODO: need to add a callback...
-void Mqtt::subscribe(const char *host, const char *object, const char *verb) {
+boolean Mqtt::subscribe(const char *host, const char *object, const char *verb) {
     char topic[81];
     snprintf(topic, 80, "%s/%s/%s", host, object, verb);
-    client.subscribe(topic);
+    return client.subscribe(topic);
   };
