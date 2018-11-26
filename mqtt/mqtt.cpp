@@ -3,6 +3,8 @@
 #include "mqtt.h"
 
 #include <Time.h>
+#include <NtpClientLib.h>
+
 
 Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport) {
   m_SSID = (char*) malloc(strlen(SSID) + 1);
@@ -53,6 +55,8 @@ void Mqtt::setup() {
     Serial.println("Connected:");
     Serial.println( WiFi.localIP());
 
+	  NTP.begin (); // Only statement needed to start NTP sync.
+
     client.setServer(m_MQTTServer, m_MQTTPort);
     client.setCallback(callback);
   };
@@ -94,7 +98,7 @@ bool Mqtt::loop() {
     // TODO: only set it if its not already set
     time_t t = now();
     //2018-11-17T06:52:44.747234
-    snprintf(str, 100, "%d-%2d-%2dT%2d:%2d:%2d", year(t), month(t), day(t), hour(t), minute(t), second(t));
+    snprintf(str, 100, "%d-%02d-%02dT%02d:%02d:%02d", year(t), month(t), day(t), hour(t), minute(t), second(t));
     root["time"] = String(str);
 
 
