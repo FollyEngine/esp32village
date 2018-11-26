@@ -56,6 +56,10 @@ void Mqtt::setup() {
     Serial.println( WiFi.localIP());
 
 	  NTP.begin (); // Only statement needed to start NTP sync.
+    //timeZone = 0;
+    //minutesTimeZone = 0;
+    //NTP.begin ("pool.ntp.org", timeZone, true, minutesTimeZone);
+    //NTP.setInterval (63);
 
     client.setServer(m_MQTTServer, m_MQTTPort);
     client.setCallback(callback);
