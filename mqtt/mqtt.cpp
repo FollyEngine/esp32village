@@ -2,6 +2,8 @@
 
 #include "mqtt.h"
 
+#include <Time.h>
+
 Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport) {
   m_SSID = (char*) malloc(strlen(SSID) + 1);
   strcpy(m_SSID, SSID);
@@ -47,8 +49,10 @@ void Mqtt::setup() {
       Serial.println(".");
       delay(500);
     }
+
     Serial.println("Connected:");
     Serial.println( WiFi.localIP());
+
     client.setServer(m_MQTTServer, m_MQTTPort);
     client.setCallback(callback);
   };
@@ -83,13 +87,22 @@ bool Mqtt::loop() {
     client.publish(topic, message);
   };
 
-  void Mqtt::publish(const char *object, const char *verb, const JsonObject& root) {
+  void Mqtt::publish(const char *object, const char *verb, JsonObject& root) {
     char str[201];
+    // TODO: only set it if its not already set
+    root["device"] = String(object);
+    // TODO: only set it if its not already set
+    time_t t = now();
+    //2018-11-17T06:52:44.747234
+    snprintf(str, 100, "%d-%2d-%2dT%2d:%2d:%2d", year(t), month(t), day(t), hour(t), minute(t), second(t));
+    root["time"] = String(str);
+
+
     root.printTo(str, 200);
     publishString(object, verb, str);
   };
 
-  void Mqtt::status(const char *object, const JsonObject& root) {
+  void Mqtt::status(const char *object, JsonObject& root) {
     publish(object, "status", root);
   };
 
