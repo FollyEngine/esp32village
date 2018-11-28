@@ -26,8 +26,8 @@ class Mqtt
     void setup();
     bool loop();  // returns false if we had to re-init
 
-    void publish(const char *object, const char *verb, const JsonObject& root);
-    void status(const char *object, const JsonObject& root);
+    void publish(const char *object, const char *verb, JsonObject& root);
+    void status(const char *object, JsonObject& root);
 
     void publishString(const char *object, const char *verb, const char *message);
     void statusString(const char *object, const char *message);
