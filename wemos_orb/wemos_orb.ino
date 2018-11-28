@@ -20,7 +20,7 @@ const int ledPin =  LED_BUILTIN;      // the number of the LED pin
 // When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
 // Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
 // example for more information on possible values.
-#define LED_NUM 1
+#define LED_NUM 16
 Adafruit_NeoPixel left_leds = Adafruit_NeoPixel(LED_NUM, D5, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel right_leds = Adafruit_NeoPixel(LED_NUM, D6, NEO_GRB + NEO_KHZ800);
 
@@ -31,6 +31,8 @@ void mqtt_callback_fn(const char* topic, byte* payload, unsigned int length) {
   on = ! on;  
 }
 
+// TODO: set brightness and colour set from mqtt payload
+#define BRIGHTNESS 140
 
 void setup() {
   //while (!Serial);
@@ -43,14 +45,15 @@ void setup() {
 
   // initialize the LED pin as an output:
   pinMode(ledPin, OUTPUT);
+  pinMode(ledPin, LOW);
   
   left_leds.begin(); // This initializes the NeoPixel library.
-  left_leds.setBrightness(0);
+  left_leds.setBrightness(BRIGHTNESS);
   left_leds.show();                //Set all pixels to "off"
   leds_set(left_leds, 100, 100, 0);
   
   right_leds.begin(); // This initializes the NeoPixel library.
-  right_leds.setBrightness(0);
+  right_leds.setBrightness(BRIGHTNESS);
   right_leds.show();                //Set all pixels to "off"
   leds_set(right_leds, 0, 100, 0);
 
@@ -60,7 +63,7 @@ void leds_set(Adafruit_NeoPixel &leds, uint8 R, uint8 G, uint8 B) {
   for (int i = 0; i < LED_NUM; i++) {
     leds.setPixelColor(i, leds.Color(R, G, B));
     leds.show();
-    delay(50);
+    //delay(50);
   }
 }
 
@@ -76,7 +79,7 @@ void loop() {
   if (on) {
     pinMode(ledPin, HIGH);
   } else {
-    pinMode(ledPin, OUTPUT);
+    pinMode(ledPin, LOW);
   }
 
 
@@ -85,8 +88,8 @@ void loop() {
   }
 
   if (!initialised) {
-//    leds_set(left_leds, 0, 0, 0);
-//    leds_set(right_leds, 0, 0, 0);
+    //leds_set(left_leds, 0, 0, 0);
+    //leds_set(right_leds, 0, 0, 0);
     // turn off the cpu board led
     digitalWrite(ledPin, HIGH);
   
@@ -94,15 +97,15 @@ void loop() {
     initialised = mqtt.subscribe("esp8266-84f3eb3b74a6", "button", "pushed");
     Serial.printf("loop Subscription returned: %s\n", initialised ? "true" : "false");
     // esp8266-84f3eb3b74a6/button/pushed
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 2*LED_NUM; i++) {
       pixie_dust(left_leds, colour);
       pixie_dust(right_leds, colour);
-      delay(2);
+      delay(1);
     }
     colour++;
   }
   if (on) {
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 2*LED_NUM; i++) {
       pixie_dust(left_leds, colour);
       pixie_dust(right_leds, colour);
       delay(2);
