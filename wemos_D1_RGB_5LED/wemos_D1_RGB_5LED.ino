@@ -35,7 +35,6 @@ void mqtt_callback_fn(const char* topic, byte* payload, unsigned int length) {
 
 
 void setup() {
-
   //while (!Serial);
   Serial.begin(115200);
   Serial.printf("Started\n");
@@ -62,11 +61,17 @@ void led_set(uint8 R, uint8 G, uint8 B) {
 }
 
 boolean initialised = false;
+int colour = 0;
+
 
 void loop() {
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   mqtt.loop();
+
+  if (colour > 4) {
+    colour = 0;
+  }
 
   if (!initialised) {
     led_set(0, 0, 0);
@@ -77,10 +82,18 @@ void loop() {
     initialised = mqtt.subscribe("esp8266-84f3eb3b74a6", "button", "pushed");
     Serial.printf("loop Subscription returned: %s\n", initialised ? "true" : "false");
     // esp8266-84f3eb3b74a6/button/pushed
-    pixie_dust();
+    for (int i = 0; i < 20; i++) {
+      pixie_dust(colour);
+      delay(2);
+    }
+    colour++;
   }
   if (on) {
-    pixie_dust();
+    for (int i = 0; i < 20; i++) {
+      pixie_dust(colour);
+      delay(2);
+    }
+    colour++;
   }
 }
 
@@ -91,9 +104,8 @@ void loop() {
     #define BRIGHT 100        // Brightness of the pixels, max is 255
      
     bool oldState = HIGH; //sets the initial variable for counting touch sensor button pushes
-    int showColor = 3;    //color mode for cycling
      
-    void pixie_dust() {
+    void pixie_dust(int showColor) {
       int RColor = 100; //color (0-255) values to be set by cylcing touch switch, initially GOLD
       int GColor = 0 ;
       int BColor = 0 ;
@@ -129,9 +141,11 @@ void loop() {
       leds.setPixelColor(p,RColor,GColor,BColor); //color value comes from cycling state of momentary switch
       leds.show();
       delay(DELAY_MILLIS * random(DELAY_MULT) ); //delay value randomized to up to DELAY_MULT times longer
-      leds.setPixelColor(p, RColor/10, GColor/10, BColor/10); //set to a dimmed version of the state color
+      int dim = 20;
+      leds.setPixelColor(p, RColor/dim, GColor/dim, BColor/dim); //set to a dimmed version of the state color
       leds.show();
-      leds.setPixelColor(p+1, RColor/15, GColor/15, BColor/15); //set a neighbor pixel to an even dimmer value
+      int moredim = 50;
+      leds.setPixelColor(p+1, RColor/moredim, GColor/moredim, BColor/moredim); //set a neighbor pixel to an even dimmer value
       leds.show();
       
 //      //button check to cycle through color value sets
