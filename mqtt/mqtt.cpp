@@ -6,7 +6,7 @@
 #include <NtpClientLib.h>
 
 
-Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport) {
+Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport, const char *object) {
   m_SSID = (char*) malloc(strlen(SSID) + 1);
   strcpy(m_SSID, SSID);
   m_PASS = (char*) malloc(strlen(PASS) + 1);
@@ -14,6 +14,8 @@ Mqtt::Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttp
   m_MQTTServer = (char*) malloc(strlen(Mqttserver) + 1);
   strcpy(m_MQTTServer, Mqttserver);
   m_MQTTPort = Mqttport;
+  m_Object = (char*) malloc(strlen(object) + 1);
+  strcpy(m_Object, object);
 }
 
 void Mqtt::setCallback(MQTT_CALLBACK_SIGNATURE) {
@@ -23,8 +25,12 @@ void Mqtt::setCallback(MQTT_CALLBACK_SIGNATURE) {
   }
 }
 
-void Mqtt::setHostname(char *name) {
-  strncpy(m_Hostname, name, 255);
+const char *Mqtt::getHostname() {
+  return m_Hostname;
+}
+
+const char *Mqtt::getObject() {
+  return m_Object;
 }
 
 
@@ -78,14 +84,19 @@ bool Mqtt::loop() {
         Serial.println("+");
       }
       client.setCallback(callback);
+    }
+    client.loop();
 
-      //publishString("button", "status", "connected");
+    time_t time_now = now();
+    if (time_now - m_lastStatus > (STATUSRATE)) {
+      m_lastStatus = time_now;
+
       StaticJsonBuffer<200> jsonBuffer;
       JsonObject& root = jsonBuffer.createObject();
       root["status"] = "listening";
-      status("mqtt", root);
+      status(root);
     }
-    client.loop();
+
     return reInit;
   };
 
@@ -105,18 +116,30 @@ bool Mqtt::loop() {
     snprintf(str, 100, "%d-%02d-%02dT%02d:%02d:%02d", year(t), month(t), day(t), hour(t), minute(t), second(t));
     root["time"] = String(str);
 
-
     root.printTo(str, 200);
     publishString(object, verb, str);
   };
 
-  void Mqtt::status(const char *object, JsonObject& root) {
-    publish(object, "status", root);
+  void Mqtt::status(JsonObject& root) {
+    char str[201];
+    // TODO: only set it if its not already set
+    root["device"] = String(m_Object);
+    // TODO: only set it if its not already set
+    time_t t = now();
+    //2018-11-17T06:52:44.747234
+    snprintf(str, 100, "%d-%02d-%02dT%02d:%02d:%02d", year(t), month(t), day(t), hour(t), minute(t), second(t));
+    root["time"] = String(str);
+
+    root.printTo(str, 200);
+    statusString(str);
   };
 
 
-  void Mqtt::statusString(const char *object, const char *message) {
-      publishString(object, "status", message);
+  void Mqtt::statusString(const char *message) {
+      //publishString(object, "status", message);
+    char topic[81];
+    snprintf(topic, 80, "%s/%s/%s", m_Hostname, m_Object, "status");
+    client.publish(topic, message, true);
   };
 
 // TODO: need to add a callback...
