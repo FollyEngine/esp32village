@@ -6,7 +6,8 @@
 
 // GO READ https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
 
-Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "mqtt", 1883);
+//Mqtt mqtt = Mqtt("ASUS", "MEGA SHED", "mqtt", 1883);
+Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "10.10.10.24", 1883);
 
 // constants won't change. They're used here to set pin numbers:
 // D3 is the LOLIN Wemos 1-Button Shield: https://wiki.wemos.cc/products:d1_mini_shields:1-button_shield

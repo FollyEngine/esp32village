@@ -6,16 +6,18 @@
 
 // GO READ https://www.tweaking4all.com/hardware/arduino/adruino-led-strip-effects/
 
-Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "mqtt", 1883);
+Mqtt mqtt = Mqtt("uhome", "WhatTheHe11", "mqtt.local", 1883, "5RGBShield");
 
 // constants won't change. They're used here to set pin numbers:
 // D3 is the LOLIN Wemos 1-Button Shield: https://wiki.wemos.cc/products:d1_mini_shields:1-button_shield
-const int ledPin =  LED_BUILTIN;      // the number of the LED pin
+//const int ledPin =  LED_BUILTIN;      // the number of the LED pin
+//const int ledPin =  BUILTIN_LED;      // the number of the LED pin
 
 // D4 is the default pin for the 6 LED RBG shield
 // https://wiki.wemos.cc/products:d1_mini_shields:rgb_led_shield
 // https://github.com/wemos/D1_mini_Examples/blob/master/examples/04.Shields/RGB_LED_Shield/simple/simple.ino
-#define PIN   D4
+//#define PIN   16    // wemos esp32 pin 16
+#define PIN   D4  // wemos d1 mini esp8266     BUILD with "LOLIN(WEMOS) D1 R2 & mini"
 #define LED_NUM 7
 
 // When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
@@ -33,26 +35,29 @@ void mqtt_callback_fn(const char* topic, byte* payload, unsigned int length) {
 //  flashRandom(15, 1);
 }
 
+#define BRIGHT 160
 
 void setup() {
   //while (!Serial);
   Serial.begin(115200);
   Serial.printf("Started\n");
 
-  mqtt.setHostname("5RGB");
   mqtt.setCallback(mqtt_callback_fn);
   mqtt.setup();
 
   // initialize the LED pin as an output:
-  pinMode(ledPin, OUTPUT);
+  //pinMode(ledPin, OUTPUT);
+  // turn off the cpu board led
+  //digitalWrite(ledPin, HIGH);
+
   
   leds.begin(); // This initializes the NeoPixel library.
-  //leds.setBrightness(BRIGHT);
+  leds.setBrightness(BRIGHT);
   leds.show();                //Set all pixels to "off"
 
 }
 
-void led_set(uint8 R, uint8 G, uint8 B) {
+void led_set(uint8_t R, uint8_t G, uint8_t B) {
   for (int i = 0; i < LED_NUM; i++) {
     leds.setPixelColor(i, leds.Color(R, G, B));
     leds.show();
@@ -75,8 +80,6 @@ void loop() {
 
   if (!initialised) {
     led_set(0, 0, 0);
-    // turn off the cpu board led
-    digitalWrite(ledPin, LOW);
   
     delay(1);
     initialised = mqtt.subscribe("esp8266-84f3eb3b74a6", "button", "pushed");
@@ -89,6 +92,7 @@ void loop() {
     colour++;
   }
   if (on) {
+    Serial.printf("pixie_dust");
     for (int i = 0; i < 20; i++) {
       pixie_dust(colour);
       delay(2);
