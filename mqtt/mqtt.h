@@ -15,12 +15,14 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
-// Send a Status update every 300 seconds
-#define STATUSRATE (5*60)
+// Send a Status update every 60 seconds
+#define STATUSRATE (60)
 
 class Mqtt
 {
   public:
+    // NOTE: this won't work with SSL MQTT - that requires certs and stuff to work.
+    Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport, const char *MqttUser, const char *MqttPass, const char *object);
     Mqtt(const char *SSID, const char *PASS, const char *Mqttserver, int Mqttport, const char *object);
 
     const char *getHostname();
@@ -44,6 +46,8 @@ class Mqtt
     char *m_SSID;
     char *m_PASS;
     char *m_MQTTServer;
+    char *m_MqttUser;
+    char *m_MqttPass;
     int m_MQTTPort;
     MQTT_CALLBACK_SIGNATURE;
 
